@@ -1,3 +1,14 @@
+"""
+memoria.py
+Guarda o histórico da conversa e registra perguntas que o robô não
+conseguiu responder -- útil para você revisar depois e adicionar essas
+frases na base de conhecimento do brain.py (lista FRASES).
+
+Não é usado para GERAR respostas (isso é tudo feito pelo brain.py, que
+tolera melhor os erros de transcrição do Vosk do que uma busca exata em
+banco de dados faria).
+"""
+
 import sqlite3
 from datetime import datetime
 

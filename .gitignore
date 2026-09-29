@@ -1,0 +1,31 @@
+# Modelos e dados pesados -- baixe de novo em cada máquina (ver README)
+vosk-model-small-pt-0.3/
+vosk-model-small-pt-0.3.zip
+vosk-model-small-pt-0.3.zip.*
+vozes/
+vozes_faber/
+*.pt
+*.tflite
+*.caffemodel
+*.onnx
+*.gguf
+deploy.prototxt
+
+# Banco de dados local (gerado em uso, não é código)
+memoria.db
+*.db
+
+# Ambiente Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Arquivos temporários / rascunhos
+*.save
+*.tmp
+/tmp/
+
+# Configuração de editor
+.vscode/
+BitNet/

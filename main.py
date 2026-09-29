@@ -168,9 +168,9 @@ def conversa():
             time.sleep(0.2)
 
     print()
-    print("=" * 60)
+    #print("=" * 60)
     print("C-2GELSA encerrado.")
-    print("=" * 60)
+    #print("=" * 60)
 
 
 

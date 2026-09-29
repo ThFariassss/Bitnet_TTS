@@ -1,3 +1,16 @@
+"""
+mic.py
+Microfone contínuo para o C-2GELSA.
+
+Pulse/PipeWire
+      ↓
+SoundDevice
+      ↓
+Vosk
+      ↓
+texto
+"""
+
 import json
 import queue
 import time
@@ -5,6 +18,10 @@ import time
 import sounddevice as sd
 import vosk
 
+
+# ============================================================
+# CONFIGURAÇÃO
+# ============================================================
 
 VOSK_MODEL_PATH = (
     "/home/th/Downloads/Bitnet_TTS/"
@@ -17,11 +34,18 @@ BLOCKSIZE = 2048
 PULSE_DEVICE_NAME = "pulse"
 
 
+# ============================================================
+# ESTADO
+# ============================================================
+
 _modelo = None
 _device_index = None
 _audio_queue = queue.Queue()
 
 
+# ============================================================
+# ENCONTRAR ENTRADA DE ÁUDIO
+# ============================================================
 
 def encontrar_dispositivo_entrada():
     """Procura o dispositivo 'pulse'. Se não achar, cai para o dispositivo
@@ -53,6 +77,9 @@ def encontrar_dispositivo_entrada():
     return padrao
 
 
+# ============================================================
+# MODELO
+# ============================================================
 
 def carregar_modelo():
     global _modelo
@@ -67,7 +94,9 @@ def carregar_modelo():
     return _modelo
 
 
-
+# ============================================================
+# CALLBACK
+# ============================================================
 
 def _callback_audio(indata, frames, time_info, status):
     if status:
@@ -82,6 +111,10 @@ def _limpar_fila():
         except queue.Empty:
             break
 
+
+# ============================================================
+# ESCUTAR
+# ============================================================
 
 def escutar_uma_frase() -> str:
     """Bloqueia até detectar uma frase completa (uma pausa natural marca
@@ -114,4 +147,5 @@ def escutar_uma_frase() -> str:
                 texto = resultado.get("text", "").strip()
                 if texto:
                     return texto
-             
+                # pausa detectada mas sem fala (só silêncio/ruído) --
+                # continua escutando a próxima frase
