@@ -29,3 +29,6 @@ __pycache__/
 # Configuração de editor
 .vscode/
 BitNet/
+
+# Backups manuais locais
+*.bak-*
