@@ -1,18 +1,10 @@
-import os
 import queue
 import subprocess
-import tempfile
 import threading
 
-# Python do ambiente conda onde o pacote "piper" está instalado.
-PIPER_PYTHON = "/home/th/Downloads/yes/envs/bitnet/bin/python"
+from piper_residente import Piper
 
-PIPER_VOICE_MODEL = (
-    "/home/th/Downloads/Bitnet_TTS/"
-    "vozes_faber/pt/pt_BR/faber/medium/"
-    "pt_BR-faber-medium.onnx"
-)
-
+_piper = None
 _fila_falas = queue.Queue()
 _thread_falante_iniciada = False
 _lock_thread = threading.Lock()
@@ -53,42 +45,14 @@ def _loop_falante() -> None:
 
 
 def _falar_com_piper(texto: str) -> None:
-    if not os.path.isfile(PIPER_VOICE_MODEL):
-        raise FileNotFoundError(f"Modelo Piper não encontrado:\n{PIPER_VOICE_MODEL}")
-    if not os.path.isfile(PIPER_PYTHON):
-        raise FileNotFoundError(f"Python do ambiente não encontrado:\n{PIPER_PYTHON}")
+    global _piper
+    if _piper is None:
+        # caminhos por LSA_PIPER_DIR / LSA_PIPER_VOICE (padrão: ~/piper)
+        _piper = Piper()
 
-    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
-        caminho_wav = tmp.name
-
-    try:
-        comando = [
-            PIPER_PYTHON, "-m", "piper",
-            "--model", PIPER_VOICE_MODEL,
-            "--output_file", caminho_wav,
-        ]
-
-        print(f"[VOICE] falando: {texto}")
-
-        resultado = subprocess.run(
-            comando, input=texto, text=True, capture_output=True, check=False,
-        )
-
-        if resultado.returncode != 0:
-            print("[VOICE] Piper retornou erro:")
-            print(resultado.stderr)
-            raise RuntimeError("Piper não conseguiu gerar o áudio.")
-
-        if os.name == "posix":
-            subprocess.run(["aplay", caminho_wav], check=True)
-        else:
-            import winsound
-            winsound.PlaySound(caminho_wav, winsound.SND_FILENAME)
-    finally:
-        try:
-            os.remove(caminho_wav)
-        except OSError:
-            pass
+    print(f"[VOICE] falando: {texto}")
+    wav = _piper.sintetizar(texto)
+    subprocess.run(["aplay", "-q", "-"], input=wav, check=True)
 
 
 def esperar_todas_falas_terminarem() -> None:

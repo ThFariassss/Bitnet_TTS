@@ -12,7 +12,7 @@ banco de dados faria).
 import sqlite3
 from datetime import datetime
 
-DB_PATH = "/home/th/Downloads/Bitnet_TTS/memoria.db"
+DB_PATH = "/home/lsa-robot/Bitnet_TTS/memoria.db"
 
 
 def _conectar():
